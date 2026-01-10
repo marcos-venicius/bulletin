@@ -56,6 +56,10 @@ body,
   background: #E3E3E3;
 }
 
+.view * {
+  font-size: 12px;
+}
+
 .view {
   width: min(980px, 100%);
   margin-inline: auto;

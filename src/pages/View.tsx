@@ -1,4 +1,8 @@
-import type { SaturdayRow, SundayRow, Bulletin, WednesdayRow } from "@/constants";
+import { type SaturdayRow, type SundayRow, type Bulletin, type WednesdayRow, MAX_N_YEARS_BEFORE_CURRENT, MAX_N_YEARS_AFTER_CURRENT } from "@/constants";
+import { getMonthString } from "@/utils/get-month-string";
+import { CircleDashedIcon } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router";
 
 type TableProps<T extends keyof Bulletin['days']> = {
   kind: T;
@@ -111,128 +115,101 @@ function Table<T extends keyof Bulletin['days']>({ kind, rows }: TableProps<T>) 
   }
 }
 
-function View() {
+type ExpectedParams<T = string> = {
+  month: T;
+  year: T;
+}
+
+export function Review() {
+  const [hasError, setHasError] = useState(true);
+  const [gettingData, setGettingData] = useState(true);
+  const [combination, setCombination] = useState<ExpectedParams<number> | null>(null);
+  const [bulletin, setBulletin] = useState<Bulletin | null>(null);
+
+  const params = useParams();
+  const navigate = useNavigate();
+
+  const loading = hasError || gettingData || !bulletin;
+
+  useEffect(() => {
+    const now = new Date();
+
+    let error = false;
+
+    error = error || !params.year;
+    error = error || !params.month;
+
+    let month = Number(params.month);
+    let year = Number(params.year);
+
+    error = error || Number.isNaN(month);
+    error = error || Number.isNaN(year);
+    error = error || month < 1;
+    error = error || month > 12;
+    error = error || year < now.getFullYear() - MAX_N_YEARS_BEFORE_CURRENT;
+    error = error || year > now.getFullYear() + MAX_N_YEARS_AFTER_CURRENT;
+
+    if (error) {
+      navigate('/');
+    } else {
+      setCombination({
+        month,
+        year
+      });
+      setHasError(false);
+    }
+  }, [params]);
+
+  useEffect(() => {
+    if (hasError) return;
+    if (!combination) return;
+
+    const key = `bulletin:${combination.month}:${combination.year}`;
+
+    const data = localStorage.getItem(key);
+
+    if (!data) {
+      setHasError(true);
+
+      navigate('/');
+    } else {
+      const json = JSON.parse(data);
+
+      setBulletin(json);
+      setGettingData(false);
+    }
+  }, [hasError, combination]);
+
+  if (loading) {
+    return (
+      <main className="w-full h-full bg-white flex items-center justify-center">
+        <CircleDashedIcon className="animate-spin" />
+      </main>
+    );
+  }
+
   return (
     <main className="view">
       <img src="/assets/logo.png" />
 
       <div id="banner">
         <p>
-          ESCALA DE SERVIÇO DE CULTO - JANEIRO 2026
+          ESCALA DE SERVIÇO DE CULTO - {getMonthString(combination?.month ?? 0)} {combination?.year}
         </p>
       </div>
 
       <Table
         kind="sunday"
-        rows={[
-          {
-            day: 4,
-            direction: 'DÁ. EVALDO',
-            preacher: 'PR. JONAS',
-            special: false,
-            singers: 'VENICIUS, ELOÍ, GUERREIRAS, TAYNÁ, TURMINHA',
-            recepcionist: 'ZÉ WILSON'
-          },
-          {
-            day: 11,
-            direction: 'NALDO',
-            preacher: 'WASHINGTON JR',
-            special: false,
-            singers: 'TURMINHA, VENICIUS, GUERREIRAS, ELOÍ, FRANCIELE',
-            recepcionist: 'ELIELTON'
-          },
-          {
-            day: 18,
-            direction: 'DÁ. ANTONIO',
-            preacher: 'DÁ. EVALDO',
-            special: false,
-            singers: 'CLEIDIANE, TURMINHA, EDNELDA, ELOÍ, TAYNÁ, GUERREIRAS',
-            recepcionist: 'NETO'
-          },
-          {
-            day: 25,
-            direction: 'EDNELDA',
-            preacher: 'PR. JONAS',
-            special: false,
-            singers: 'FAMÍLIAS: ZÉ WILSON, PR. JONAS, NALDO, EDIM, EVALDO, ELIELTON',
-            recepcionist: 'FAMÍLIA NALDO'
-          }
-        ]}
+        rows={bulletin.days.sunday}
       />
       <Table
         kind="wednesday"
-        rows={[
-          {
-            day: 7,
-            direction: 'NETA',
-            preacher: 'DSA. ANA',
-            special: false,
-            theme: 'A PALAVRA DE DEUS',
-            recepcionist: 'EMIKSON'
-          },
-          {
-            day: 14,
-            direction: 'FRANCILENE',
-            preacher: 'EMIKSON',
-            special: false,
-            theme: 'A CRIAÇÃO DE TODAS AS COISAS',
-            recepcionist: 'ZÉ WILSON'
-          },
-          {
-            day: 21,
-            direction: 'MISAELLEM',
-            preacher: 'LENINHA',
-            special: false,
-            theme: 'A QUEDA DO HOMEM',
-            recepcionist: 'ELIELTON'
-          },
-          {
-            day: 28,
-            direction: 'LENINHA',
-            preacher: 'EMIKSON',
-            special: false,
-            theme: 'O PLANO DE REDENÇÃO',
-            recepcionist: 'DÁ. EVALDO'
-          },
-        ]}
+        rows={bulletin.days.wednesday}
       />
       <Table
         kind="saturday"
-        rows={[
-          {
-            day: 3,
-            facilitator: "PR. JONAS",
-            theme: "INVERSÃO DE PRIORIDADES",
-            divineCult: "PR. JONAS"
-          },
-          {
-            day: 10,
-            facilitator: "FRANCILENE",
-            theme: "PRISIONEIROS DO PASSADO?",
-            divineCult: "FRANCILENE"
-          },
-          {
-            day: 17,
-            facilitator: "PR. JONAS",
-            theme: "CHAMADO À SANTIDADE",
-            divineCult: "PR. JONAS"
-          },
-          {
-            day: 24,
-            facilitator: "NETO",
-            theme: "O SENHOR DA HISTÓRIA",
-            divineCult: "NETO"
-          },
-          {
-            day: 31,
-            facilitator: "CLEIDIANE",
-            theme: "CONVITE AO ARREPENDIMENTO",
-            divineCult: "CLEIDIANE"
-          }
-        ]}
+        rows={bulletin.days.saturday}
       />
     </main>
   );
 }
-
-export default View
