@@ -36,7 +36,8 @@ export function App() {
   const [year, setYear] = useState<number>(currentYear);
 
   function onContinue() {
-    navigate(`/configurar/${month}/${year}`);
+    //navigate(`/configurar/${month}/${year}`);
+    navigate(`/configurar/v2/${month}/${year}`);
   }
 
   return (

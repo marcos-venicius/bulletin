@@ -58,3 +58,5 @@ export type Bulletin = {
   month: number;
   year: number;
 }
+
+export type KeysOfUnion<T> = T extends any ? keyof T : never;

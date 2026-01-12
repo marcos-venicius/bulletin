@@ -56,11 +56,11 @@ body,
   background: #E3E3E3;
 }
 
-.view * {
+.view *, .configure * {
   font-size: 12px;
 }
 
-.view {
+.view, .configure {
   width: min(980px, 100%);
   margin-inline: auto;
   height: 100%;
@@ -87,11 +87,6 @@ table {
     border-color: #234C6A;
   }
 
-  th, td {
-    padding: 5px;
-    color: #1B3C53;
-  }
-
   td[data-align="center"] {
     text-align: center;
   }
@@ -108,6 +103,29 @@ table {
 
   &:not(:first-child) {
     margin-top: 2rem;
+  }
+}
+
+.view table {
+  th, td {
+    padding: 5px;
+    color: #1B3C53;
+  }
+}
+
+.configure {
+  table {
+    th, input {
+      padding: 5px;
+    }
+
+    input:not([data-outline="manual"]) {
+      outline: none;
+
+      &:focus {
+        outline: 2px solid #1B3C53;
+      }
+    }
   }
 }
 
