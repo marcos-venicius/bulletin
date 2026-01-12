@@ -118,10 +118,9 @@ export function SundayTable({ rows }: Props) {
                     defaultValue={row.warn}
                     onChange={changeField(row.day, "warn")}
                     className={cn(
-                      "w-full h-full min-w-[0px] text-[#F87B1B]",
+                      "w-full h-full min-w-[0px] text-[#F87B1B] font-bold",
                       (isFocused(row.day)) && "outline-[#F87B1B] outline-2",
                       (isHovering(row.day)) && "outline-2 outline-[#1B3C53]",
-                      (!isHovering(row.day)) && "outline-2 outline-[#F87B1B]"
                     )}
                   />
                 ) : (
