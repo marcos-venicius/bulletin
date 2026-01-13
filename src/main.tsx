@@ -6,11 +6,9 @@ import { ConfigurePage } from './pages/configure-page.tsx';
 import { TableProvider } from './components/table/provider.tsx';
 import './index.css'
 
-const BASE_URL = import.meta.env.BASE_URL.replace(/\/$/, "");
-
 createRoot(document.getElementById('root')!).render(
   <>
-    <BrowserRouter basename={BASE_URL}>
+    <BrowserRouter basename="/bulletin">
       <Routes>
         <Route path="/" element={<AppPage />} />
         <Route
