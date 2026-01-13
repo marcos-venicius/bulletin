@@ -4,6 +4,8 @@ import { getMonthString } from "@/utils/get-month-string";
 import { CircleDashedIcon } from "lucide-react";
 import { useContext, useEffect } from "react";
 
+const BASE_URL = import.meta.env.BASE_URL.replace(/\/$/, "");
+
 export function ConfigurePage() {
   const { loading, bulletin, pendingChanges } = useContext(TableContext);
 
@@ -32,7 +34,7 @@ export function ConfigurePage() {
 
   return (
     <main className="configure">
-      <img src="/assets/logo.png" />
+      <img src={`${BASE_URL}/assets/logo.png`} />
 
       <div id="banner">
         <p>
