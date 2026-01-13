@@ -4,7 +4,7 @@ import { getMonthString } from "@/utils/get-month-string";
 import { CircleDashedIcon } from "lucide-react";
 import { useContext, useEffect } from "react";
 
-export function AppV2() {
+export function ConfigurePage() {
   const { loading, bulletin, pendingChanges } = useContext(TableContext);
 
   useEffect(() => {

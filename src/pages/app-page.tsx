@@ -15,7 +15,7 @@ function getYears(from: number, opts?: { nYearsBefore?: number, nYearsAfter?: nu
   );
 }
 
-export function App() {
+export function AppPage() {
   const date = new Date();
   const currentMonth = date.getMonth() + 1;
   const currentYear = date.getFullYear();
@@ -36,8 +36,7 @@ export function App() {
   const [year, setYear] = useState<number>(currentYear);
 
   function onContinue() {
-    //navigate(`/configurar/${month}/${year}`);
-    navigate(`/configurar/v2/${month}/${year}`);
+    navigate(`/configurar/${month}/${year}`);
   }
 
   return (
