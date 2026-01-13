@@ -1,5 +1,5 @@
 import { createRoot } from 'react-dom/client'
-import { BrowserRouter, Route, Routes } from 'react-router';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router';
 import { Toaster } from './components/ui/sonner.tsx';
 import { AppPage } from './pages/app-page.tsx'
 import { ConfigurePage } from './pages/configure-page.tsx';
@@ -19,6 +19,8 @@ createRoot(document.getElementById('root')!).render(
             </TableProvider>
           }
         />
+
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
 
