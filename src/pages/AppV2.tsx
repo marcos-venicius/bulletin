@@ -2,10 +2,25 @@ import { Table } from "@/components/table";
 import { TableContext } from "@/components/table/provider";
 import { getMonthString } from "@/utils/get-month-string";
 import { CircleDashedIcon } from "lucide-react";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 
 export function AppV2() {
-  const { loading, bulletin } = useContext(TableContext);
+  const { loading, bulletin, pendingChanges } = useContext(TableContext);
+
+  useEffect(() => {
+    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+      if (pendingChanges <= 0) return;
+
+      event.preventDefault();
+      event.returnValue = "";
+    }
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    }
+  }, [pendingChanges]);
 
   if (loading) {
     return (
