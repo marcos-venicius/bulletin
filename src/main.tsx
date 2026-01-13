@@ -1,5 +1,5 @@
 import { createRoot } from 'react-dom/client'
-import { BrowserRouter, Route, Routes } from 'react-router';
+import { HashRouter, Route, Routes } from 'react-router';
 import { Toaster } from './components/ui/sonner.tsx';
 import { AppPage } from './pages/app-page.tsx'
 import { ConfigurePage } from './pages/configure-page.tsx';
@@ -8,7 +8,7 @@ import './index.css'
 
 createRoot(document.getElementById('root')!).render(
   <>
-    <BrowserRouter basename="/bulletin">
+    <HashRouter>
       <Routes>
         <Route path="/" element={<AppPage />} />
         <Route
@@ -21,7 +21,7 @@ createRoot(document.getElementById('root')!).render(
         />
 
       </Routes>
-    </BrowserRouter>
+    </HashRouter>
 
     <Toaster />
   </>,
