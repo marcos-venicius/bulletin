@@ -3,6 +3,7 @@ import { TableContext } from "@/components/table/provider";
 import { getMonthString } from "@/utils/get-month-string";
 import { CircleDashedIcon } from "lucide-react";
 import { useContext, useEffect } from "react";
+import logo from '/assets/logo.png';
 
 export function ConfigurePage() {
   const { loading, bulletin, pendingChanges } = useContext(TableContext);
@@ -32,7 +33,7 @@ export function ConfigurePage() {
 
   return (
     <main className="configure">
-      <img src="/logo.png" />
+      <img src={logo} alt="Logo" />
 
       <div id="banner">
         <p>
