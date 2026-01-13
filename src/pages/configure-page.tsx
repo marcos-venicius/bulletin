@@ -32,7 +32,7 @@ export function ConfigurePage() {
 
   return (
     <main className="configure">
-      <img src="/assets/logo.png" />
+      <img src="/logo.png" />
 
       <div id="banner">
         <p>
