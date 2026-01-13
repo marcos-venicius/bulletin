@@ -2,9 +2,10 @@ import type { Bulletin, KeysOfUnion, SundayRow } from "@/constants";
 import { cn } from "@/lib/utils";
 import { formatDay } from "@/utils/format-day";
 import { Else, If } from "@/utils/If";
-import { MicVocalIcon, RotateCw } from "lucide-react";
-import { useContext, useState } from "react";
+import { RotateCw, Sparkles } from "lucide-react";
+import { useContext } from "react";
 import { TableContext } from "../provider";
+import { useEvents } from "../hooks";
 
 type Props = {
   rows: SundayRow[];
@@ -13,58 +14,7 @@ type Props = {
 export function SundayTable({ rows }: Props) {
   const { swapSpecialDay, changeCategoryField } = useContext(TableContext);
 
-  const [focusing, setFocusing] = useState<number | null>(null);
-  const [hoverCell, setHoverCell] = useState<number | null>(null);
-
-  function hoverController(day: number) {
-    return {
-      onMouseEnter: () => {
-        if (focusing === day) return;
-
-        setHoverCell(day);
-      },
-      onMouseLeave: () => {
-        setHoverCell(null);
-      }
-    }
-  }
-
-  function blurController(day: number) {
-    return {
-      onBlur: () => {
-        setFocusing(null);
-      },
-      onFocus: () => {
-        setHoverCell(null);
-        setFocusing(day);
-      }
-    }
-  }
-
-  function escapeEventController(day: number) {
-    return {
-      onKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === 'Escape') {
-          e.currentTarget?.blur();
-
-          unsetFocused(day);
-          setHoverCell(day);
-        }
-      }
-    }
-  }
-
-  function unsetFocused(day: number) {
-    if (focusing === day) setFocusing(null);
-  }
-
-  function isHovering(day: number) {
-    return hoverCell === day;
-  }
-
-  function isFocused(day: number) {
-    return focusing === day;
-  }
+  const { hoverController, blurController, escapeEventController, isFocused, isHovering } = useEvents();
 
   function changeField(day: number, field: KeysOfUnion<Bulletin['days']['sunday'][0]>) {
     return (e: React.ChangeEvent<HTMLInputElement>) => changeCategoryField('sunday', field, day, e.target.value);
@@ -149,9 +99,9 @@ export function SundayTable({ rows }: Props) {
                       !row.special && "bg-[#F87B1B]"
                     )}>
                     <If condition={row.special}>
-                      <MicVocalIcon className="h-[80%] text-white" />
+                      <RotateCw className="h-[80%] text-white" />
                       <Else>
-                        <RotateCw className="h-[80%] text-white" />
+                        <Sparkles className="h-[80%] text-white" />
                       </Else>
                     </If>
                   </button>
