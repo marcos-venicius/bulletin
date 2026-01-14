@@ -2,12 +2,14 @@ import type { Bulletin, KeysOfUnion, SaturdayRow } from "@/constants"
 import { formatDay } from "@/utils/format-day";
 import { useContext } from "react";
 import { TableContext } from "../provider";
+import { Else, If } from "@/utils/If";
 
 type Props = {
   rows: SaturdayRow[];
+  viewMode: boolean;
 }
 
-export function SaturdayTable({ rows }: Props) {
+export function SaturdayTable({ rows, viewMode }: Props) {
   const { changeCategoryField } = useContext(TableContext);
 
   function changeField(day: number, field: KeysOfUnion<Bulletin['days']['saturday'][0]>) {
@@ -23,7 +25,7 @@ export function SaturdayTable({ rows }: Props) {
           </th>
         </tr>
         <tr>
-          <th>DIA</th>
+          <th className="w-10">DIA</th>
           <th>FACILITADOR</th>
           <th>TEMA</th>
           <th>CULTO DIVINO</th>
@@ -32,30 +34,48 @@ export function SaturdayTable({ rows }: Props) {
       <tbody>
         {rows.map((row) => (
           <tr key={row.day} className="relative">
-            <td data-align="center">{formatDay(row.day)}</td>
+            <td data-align="center" className="text-[#1B3C53] font-bold">{formatDay(row.day)}</td>
             <td>
-              <input
-                placeholder="digite aqui..."
-                className="w-full h-full min-w-[0px]"
-                defaultValue={row.facilitator}
-                onChange={changeField(row.day, "facilitator")}
-              />
+              <If condition={viewMode}>
+                {row.facilitator}
+
+                <Else>
+                  <input
+                    placeholder="digite aqui..."
+                    className="w-full h-full min-w-[0px]"
+                    defaultValue={row.facilitator}
+                    onChange={changeField(row.day, "facilitator")}
+                  />
+                </Else>
+              </If>
             </td>
             <td>
-              <input
-                placeholder="digite aqui..."
-                className="w-full h-full min-w-[0px]"
-                defaultValue={row.theme}
-                onChange={changeField(row.day, "theme")}
-              />
+              <If condition={viewMode}>
+                {row.theme}
+
+                <Else>
+                  <input
+                    placeholder="digite aqui..."
+                    className="w-full h-full min-w-[0px]"
+                    defaultValue={row.theme}
+                    onChange={changeField(row.day, "theme")}
+                  />
+                </Else>
+              </If>
             </td>
             <td>
-              <input
-                placeholder="digite aqui..."
-                className="w-full h-full min-w-[0px]"
-                defaultValue={row.divineCult}
-                onChange={changeField(row.day, "divineCult")}
-              />
+              <If condition={viewMode}>
+                {row.divineCult}
+
+                <Else>
+                  <input
+                    placeholder="digite aqui..."
+                    className="w-full h-full min-w-[0px]"
+                    defaultValue={row.divineCult}
+                    onChange={changeField(row.day, "divineCult")}
+                  />
+                </Else>
+              </If>
             </td>
           </tr>
         ))}

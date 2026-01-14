@@ -10,12 +10,10 @@ export function If({ children, condition }: IfProps) {
   let elseChild = null;
 
   React.Children.forEach(children, child => {
-    if (!React.isValidElement(child)) return;
-
-    if (child.type === Else) {
+    if (React.isValidElement(child) && child.type === Else) {
       elseChild = child;
     } else {
-      ifChild.push(child);
+      ifChild.push(child as React.ReactElement);
     }
   });
 

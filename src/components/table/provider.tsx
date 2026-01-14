@@ -1,7 +1,6 @@
 import { MAX_N_YEARS_AFTER_CURRENT, MAX_N_YEARS_BEFORE_CURRENT, type Bulletin, type KeysOfUnion } from "@/constants";
 import { createContext, useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router";
-import { toast } from "sonner";
 
 const EMPTY_BULLETIN: Bulletin = {
   days: {
@@ -18,6 +17,7 @@ type TableContextProps = {
   bulletin: Bulletin;
   loading: boolean;
   pendingChanges: number;
+  clear(): void;
   changeCategoryField<T extends keyof Bulletin['days']>(category: T, field: KeysOfUnion<Bulletin['days'][T][0]>, day: number, value: string): void;
   swapSpecialDay(category: keyof Bulletin['days'], day: number): void;
 }
@@ -26,6 +26,7 @@ export const TableContext = createContext<TableContextProps>({
   bulletin: EMPTY_BULLETIN,
   loading: true,
   pendingChanges: 0,
+  clear: () => { },
   changeCategoryField: () => { },
   swapSpecialDay: () => { }
 });
@@ -101,6 +102,41 @@ export function TableProvider({ children }: Props) {
 
       delete fieldsUpdate.current[key];
     }, 1000);
+  }
+
+  function clear() {
+    setBulletin(curr => {
+      const final: Bulletin = {
+        days: {
+          sunday: curr.days.sunday.map(({ day }) => ({
+            day,
+            recepcionist: '',
+            preacher: '',
+            special: false,
+            direction: '',
+            singers: ''
+          })),
+          wednesday: curr.days.wednesday.map(({ day }) => ({
+            day,
+            direction: '',
+            special: false,
+            preacher: '',
+            recepcionist: '',
+            theme: '',
+          })),
+          saturday: curr.days.saturday.map(({ day }) => ({
+            day,
+            theme: '',
+            divineCult: '',
+            facilitator: ''
+          })),
+        },
+        month: curr.month,
+        year: curr.year
+      };
+
+      return final;
+    })
   }
 
   useEffect(() => {
@@ -227,18 +263,12 @@ export function TableProvider({ children }: Props) {
 
       localStorage.setItem(key, json);
 
-      const date = new Date().toLocaleTimeString();
-
-      toast.info(`modificações salvas em ${date}`, {
-        position: "top-right",
-      })
-
       update.current = null;
     }, 2000);
   }, [bulletin, hasError, generating, combination, key])
 
   return (
-    <TableContext.Provider value={{ bulletin, loading, swapSpecialDay, pendingChanges, changeCategoryField }}>
+    <TableContext.Provider value={{ bulletin, loading, swapSpecialDay, pendingChanges, changeCategoryField, clear }}>
       {children}
     </TableContext.Provider>
   );
