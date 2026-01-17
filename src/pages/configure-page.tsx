@@ -11,6 +11,7 @@ import { SundayTable } from "@/components/table/sunday";
 import { WednesdayTable } from "@/components/table/wednesday";
 import { SaturdayTable } from "@/components/table/saturday";
 import { KeyboardProvider } from "@/components/table/providers/keyboard-context";
+import { Help } from "@/components/help";
 
 export function ConfigurePage() {
   const { loading, bulletin, pendingChanges, clear } = useContext(TableContext);
@@ -69,6 +70,12 @@ export function ConfigurePage() {
 
   return (
     <main className={viewMode ? "view" : "configure"}>
+      <If condition={!viewMode}>
+        <div className="fixed top-5 right-5">
+          <Help />
+        </div>
+      </If>
+
       <img src={logo} alt="Logo" />
 
       <div id="banner">
