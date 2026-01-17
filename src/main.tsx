@@ -3,7 +3,7 @@ import { HashRouter, Route, Routes } from 'react-router';
 import { Toaster } from './components/ui/sonner.tsx';
 import { AppPage } from './pages/app-page.tsx'
 import { ConfigurePage } from './pages/configure-page.tsx';
-import { TableProvider } from './components/table/provider.tsx';
+import { TableProvider } from './components/table/providers/table-context.tsx';
 import './index.css'
 
 createRoot(document.getElementById('root')!).render(

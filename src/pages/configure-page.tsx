@@ -1,5 +1,4 @@
-import { Table } from "@/components/table";
-import { TableContext } from "@/components/table/provider";
+import { TableContext } from "@/components/table/providers/table-context";
 import { getMonthString } from "@/utils/get-month-string";
 import { CircleDashedIcon } from "lucide-react";
 import { useContext, useEffect, useState } from "react";
@@ -8,6 +7,10 @@ import { Button } from "@/components/ui/button";
 import { If } from "@/utils/If";
 import { useNavigate } from "react-router";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { SundayTable } from "@/components/table/sunday";
+import { WednesdayTable } from "@/components/table/wednesday";
+import { SaturdayTable } from "@/components/table/saturday";
+import { KeyboardProvider } from "@/components/table/providers/keyboard-context";
 
 export function ConfigurePage() {
   const { loading, bulletin, pendingChanges, clear } = useContext(TableContext);
@@ -74,26 +77,11 @@ export function ConfigurePage() {
         </p>
       </div>
 
-      <Table
-        key={`sunday-${render}`}
-        viewMode={viewMode}
-        kind="sunday"
-        rows={bulletin.days.sunday}
-      />
-
-      <Table
-        key={`wednesday-${render}`}
-        viewMode={viewMode}
-        kind="wednesday"
-        rows={bulletin.days.wednesday}
-      />
-
-      <Table
-        key={`saturday-${render}`}
-        viewMode={viewMode}
-        kind="saturday"
-        rows={bulletin.days.saturday}
-      />
+      <KeyboardProvider count={(Object.keys(bulletin.days) as (keyof (typeof bulletin.days))[]).map(key => bulletin.days[key].length).reduce((a, b) => a + b, 0)}>
+        <SundayTable index={0} key={`sunday-${render}`} viewMode={viewMode} rows={bulletin.days.sunday} />
+        <WednesdayTable index={bulletin.days.sunday.length} key={`wednesday-${render}`} viewMode={viewMode} rows={bulletin.days.wednesday} />
+        <SaturdayTable index={bulletin.days.sunday.length + bulletin.days.wednesday.length} key={`saturday-${render}`} viewMode={viewMode} rows={bulletin.days.saturday} />
+      </KeyboardProvider>
 
       <If condition={!viewMode}>
         <footer className="w-full py-5 flex items-center justify-between">
