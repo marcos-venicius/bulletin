@@ -153,6 +153,7 @@ function Row({ row, viewMode, index }: RowProps) {
           <Else>
             <input
               ref={d}
+              defaultValue={row.recepcionist}
               placeholder="digite aqui..."
               onChange={changeField(row.day, "recepcionist")}
               className="w-full h-full min-w-[0px]"

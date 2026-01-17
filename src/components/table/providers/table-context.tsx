@@ -1,4 +1,4 @@
-import { MAX_N_YEARS_AFTER_CURRENT, MAX_N_YEARS_BEFORE_CURRENT, type Bulletin, type KeysOfUnion } from "@/constants";
+import { MAX_N_YEARS_AFTER_CURRENT, MAX_N_YEARS_BEFORE_CURRENT, options, pickNFromArrayV2, type Bulletin, type KeysOfUnion, type SaturdayRow, type SundayRow, type WednesdayRow } from "@/constants";
 import { createContext, useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 
@@ -20,6 +20,7 @@ type TableContextProps = {
   clear(): void;
   changeCategoryField<T extends keyof Bulletin['days']>(category: T, field: KeysOfUnion<Bulletin['days'][T][0]>, day: number, value: string): void;
   swapSpecialDay(category: keyof Bulletin['days'], day: number): void;
+  preFill(): void;
 }
 
 export const TableContext = createContext<TableContextProps>({
@@ -28,7 +29,8 @@ export const TableContext = createContext<TableContextProps>({
   pendingChanges: 0,
   clear: () => { },
   changeCategoryField: () => { },
-  swapSpecialDay: () => { }
+  swapSpecialDay: () => { },
+  preFill: () => { }
 });
 
 type ExpectedParams<T = string> = {
@@ -137,6 +139,76 @@ export function TableProvider({ children }: Props) {
 
       return final;
     })
+  }
+
+  function preFill() {
+    setBulletin(curr => {
+      const m = new Map();
+      const usage = {
+        direction: m,
+        preacher: m,
+        singer: m,
+        recepcionist: m
+      };
+
+      function track(map: Map<string, number>, value: string) {
+        map.set(value, (map.get(value) || 0) + 1);
+      }
+
+      for (let i = 0; i < curr.days.sunday.length; i++) {
+        const day = curr.days.sunday[i] as Record<KeysOfUnion<SundayRow>, any>;
+
+        day.direction = pickNFromArrayV2(1, options.directionSundays, [], usage.direction, i + 1)[0];
+        track(usage.direction, day.direction);
+
+        day.preacher = pickNFromArrayV2(1, options.preacher, [day.direction], usage.preacher, i + 1)[0];
+        track(usage.preacher, day.preacher);
+
+        day.singers = pickNFromArrayV2(
+          5,
+          options.singers,
+          [day.direction, day.preacher],
+          usage.singer,
+          i + 1
+        ).join(', ');
+
+        day.recepcionist = pickNFromArrayV2(1, options.recepcionist, [day.direction, day.preacher], usage.recepcionist, i + 1)[0];
+        track(usage.recepcionist, day.recepcionist);
+      }
+
+      for (let i = 0; i < curr.days.wednesday.length; i++) {
+        const day = curr.days.wednesday[i] as Record<KeysOfUnion<WednesdayRow>, any>;
+
+        day.direction = pickNFromArrayV2(1, options.directionWednesday, [], usage.direction, i + 1)[0];
+        track(usage.direction, day.direction)
+
+        day.preacher = pickNFromArrayV2(1, options.teacherWednesday, [day.direction], usage.preacher, i + 1)[0];
+        track(usage.preacher, day.preacher);
+
+        day.recepcionist = pickNFromArrayV2(
+          1,
+          options.recepcionist,
+          [
+            day.direction,
+            day.preacher
+          ],
+          usage.recepcionist,
+          i + 1
+        )[0];
+
+        track(usage.recepcionist, day.recepcionist);
+      }
+
+      for (let i = 0; i < curr.days.saturday.length; i++) {
+        const day = curr.days.saturday[i] as Record<KeysOfUnion<SaturdayRow>, any>;
+
+        day.facilitator = pickNFromArrayV2(1, options.teacherSaturday, [], usage.direction, i + 1)[0];
+        track(usage.direction, day.facilitator)
+        day.divineCult = day.facilitator;
+      }
+
+      return { ...curr };
+    });
   }
 
   useEffect(() => {
@@ -268,7 +340,7 @@ export function TableProvider({ children }: Props) {
   }, [bulletin, hasError, generating, combination, key])
 
   return (
-    <TableContext.Provider value={{ bulletin, loading, swapSpecialDay, pendingChanges, changeCategoryField, clear }}>
+    <TableContext.Provider value={{ bulletin, loading, swapSpecialDay, pendingChanges, changeCategoryField, clear, preFill }}>
       {children}
     </TableContext.Provider>
   );

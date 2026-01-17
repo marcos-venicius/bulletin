@@ -14,7 +14,7 @@ import { KeyboardProvider } from "@/components/table/providers/keyboard-context"
 import { Help } from "@/components/help";
 
 export function ConfigurePage() {
-  const { loading, bulletin, pendingChanges, clear } = useContext(TableContext);
+  const { loading, bulletin, pendingChanges, clear, preFill } = useContext(TableContext);
   const [viewMode, setViewMode] = useState(false);
   const [render, setRender] = useState(1);
 
@@ -116,6 +116,9 @@ export function ConfigurePage() {
                 </AlertDialogFooter>
               </AlertDialogContent>
             </AlertDialog>
+            <Button className="cursor-pointer" disabled={pendingChanges !== 0} onClick={preFill}>
+              Preencher
+            </Button>
           </div>
 
           <Button className="cursor-pointer" disabled={pendingChanges !== 0} onClick={onPrint}>
