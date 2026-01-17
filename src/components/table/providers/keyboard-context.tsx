@@ -49,23 +49,38 @@ export function KeyboardProvider({ children, count }: Props) {
           element.addEventListener('keydown', event => {
             const coords = { x, y };
 
-            if (event.key === 'Enter') {
-              if (event.shiftKey) {
-                if (coords.y - 1 >= 0) {
-                  if (rows[coords.y - 1].length - 1 < coords.x) {
-                    rows[coords.y - 1][rows[coords.y - 1].length - 1].focus();
-                  } else {
-                    rows[coords.y - 1][coords.x].focus();
-                  }
+            const isUp = (event.key === 'Enter' && event.shiftKey) || event.key === 'ArrowUp';
+            const isDown = (event.key === 'Enter' && !event.shiftKey) || event.key === 'ArrowDown';
+            const isRight = (event.key === 'ArrowRight' && event.ctrlKey);
+            const isLeft = (event.key === 'ArrowLeft' && event.ctrlKey);
+
+            if (isUp) {
+              if (coords.y - 1 >= 0) {
+                if (rows[coords.y - 1].length - 1 < coords.x) {
+                  rows[coords.y - 1][rows[coords.y - 1].length - 1].focus();
+                } else {
+                  rows[coords.y - 1][coords.x].focus();
                 }
-              } else {
-                if (coords.y + 1 < rows.length) {
-                  if (rows[coords.y + 1].length - 1 < coords.x) {
-                    rows[coords.y + 1][rows[coords.y + 1].length - 1].focus();
-                  } else {
-                    rows[coords.y + 1][coords.x].focus();
-                  }
+              }
+            } else if (isDown) {
+              if (coords.y + 1 < rows.length) {
+                if (rows[coords.y + 1].length - 1 < coords.x) {
+                  rows[coords.y + 1][rows[coords.y + 1].length - 1].focus();
+                } else {
+                  rows[coords.y + 1][coords.x].focus();
                 }
+              }
+            } else if (isRight) {
+              if (coords.x < rows[coords.y].length - 1) {
+                rows[coords.y][coords.x + 1].focus();
+              } else if (coords.y < rows.length - 1) {
+                rows[coords.y + 1][0].focus();
+              }
+            } else if (isLeft) {
+              if (coords.x > 0) {
+                rows[coords.y][coords.x - 1].focus();
+              } else if (coords.y > 0) {
+                rows[coords.y - 1][rows[coords.y - 1].length - 1].focus();
               }
             }
           });
